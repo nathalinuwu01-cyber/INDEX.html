@@ -1,0 +1,264 @@
+<!DOCTYPE html> 
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Para ti, Amor ❤️</title>
+
+<style>
+body {
+    margin: 0;
+    background: black;
+    overflow: hidden;
+    font-family: Arial, sans-serif;
+}
+
+/* INTRO */
+#intro {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: black;
+    color: red;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 10;
+    text-align: center;
+    text-shadow: 0 0 10px red;
+}
+
+#intro h1 {
+    font-size: 28px;
+    margin: 0;
+}
+
+/* FADE OUT */
+#intro.fade-out {
+    opacity: 0;
+    transition: opacity 1.5s ease;
+}
+
+/* OCULTAR TODO AL INICIO */
+canvas, .texto, .abajo {
+    display: none;
+}
+
+.texto {
+    position: absolute;
+    top: 50%;
+    width: 100%;
+    text-align: center;
+    left: 3%;
+    color: red;
+    text-shadow: 0 0 10px red, 0 0 20px red;
+    animation: fade 4s infinite;
+}
+
+.texto h1 {
+    font-size: 24px;
+    margin: 0;
+}
+
+.abajo {
+    position: absolute;
+    top: 8%; 
+    width: 100%;
+    text-align: center;
+    left: 1%;
+    color: red;
+    font-size: 22px;
+    text-shadow: 0 0 10px red;
+    animation: fade 4s infinite;
+}
+
+/* Animación */
+@keyframes fade {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+}
+
+/* PANTALLA TEXTO */
+#pantallaTexto {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    display: none;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    color: red;
+    text-align: center;
+    z-index: 5;
+    pointer-events: none;
+}
+
+#pantallaTexto span {
+    margin: 5px 10px;
+    font-size: 18px;
+    opacity: 0;
+    animation: aparecer 0.8s forwards;
+}
+
+@keyframes aparecer {
+    0% { opacity: 0; transform: scale(0.8); }
+    100% { opacity: 1; transform: scale(1); }
+}
+
+/* 🔥 fade manual al hacer clic */
+.fade-out-texto span {
+    animation: desaparecer 0.8s forwards;
+}
+
+@keyframes desaparecer {
+    0% { opacity: 1; }
+    100% { opacity: 0; }
+}
+</style>
+</head>
+
+<body>
+
+<div id="intro">
+    <h1>CAUSE I LOVE YOU FOR INFINITY, CARLOS ❤️</h1>
+</div>
+
+<canvas id="canvas"></canvas>
+
+<div id="pantallaTexto"></div>
+
+<div class="texto">
+    <h1>pero más te amo ❤️</h1>
+</div>
+
+<div class="abajo">
+    Feliz 6 meses, amor 💖
+</div>
+
+<audio id="musica" loop>
+    <source src="https://files.catbox.moe/8l9lf4.mp3" type="audio/mpeg">
+</audio>
+
+<script>
+document.addEventListener("click", () => {
+    const audio = document.getElementById("musica");
+    const intro = document.getElementById("intro");
+
+    audio.muted = false;
+    audio.volume = 0.5;
+    audio.play();
+
+    intro.classList.add("fade-out");
+
+    setTimeout(() => {
+        intro.style.display = "none";
+
+        document.querySelector("canvas").style.display = "block";
+        document.querySelector(".texto").style.display = "block";
+        document.querySelector(".abajo").style.display = "block";
+    }, 1500);
+});
+</script>
+
+<script>
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+let particles = [];
+let text = "te quiero";
+
+for (let i = 0; i < Math.PI * 2; i += 0.09) {
+    let x = 16 * Math.pow(Math.sin(i), 3);
+    let y = 13 * Math.cos(i) - 5 * Math.cos(2*i) - 2 * Math.cos(3*i) - Math.cos(4*i);
+
+    let scale = 15;
+
+    particles.push({
+        baseX: canvas.width / 2 + x * scale,
+        baseY: canvas.height / 2 - y * scale,
+        angle: Math.random() * Math.PI * 2,
+        speed: 0.04 + Math.random() * 0.03
+    });
+}
+
+function animate() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    particles.forEach(p => {
+        p.angle += p.speed;
+
+        let floatX = Math.sin(p.angle) * 6;
+        let floatY = Math.cos(p.angle) * 6;
+
+        ctx.save();
+
+        ctx.translate(p.baseX + floatX, p.baseY + floatY);
+
+        ctx.fillStyle = "red";
+        ctx.font = "14px Arial";
+
+        ctx.shadowBlur = 20;
+        ctx.shadowColor = "red";
+
+        ctx.fillText(text, 0, 0);
+
+        ctx.restore();
+    });
+
+    requestAnimationFrame(animate);
+}
+
+animate();
+</script>
+
+<script>
+let alternar = false;
+
+document.addEventListener("click", () => {
+    const intro = document.getElementById("intro");
+
+    if (intro.style.display !== "none") return;
+
+    const pantalla = document.getElementById("pantallaTexto");
+    const canvas = document.querySelector("canvas");
+    const texto = document.querySelector(".texto");
+    const abajo = document.querySelector(".abajo");
+
+    alternar = !alternar;
+
+    if (alternar) {
+        canvas.style.display = "none";
+        texto.style.display = "none";
+        abajo.style.display = "none";
+
+        pantalla.style.display = "flex";
+        pantalla.classList.remove("fade-out-texto");
+
+        if (pantalla.innerHTML === "") {
+            for (let i = 0; i < 80; i++) {
+                let span = document.createElement("span");
+                span.innerText = "CAUSE I LOVE YOU FOR INFINITY, CARLOS ❤️";
+                span.style.animationDelay = (Math.random() * 0.5) + "s";
+                pantalla.appendChild(span);
+            }
+        }
+
+    } else {
+        pantalla.classList.add("fade-out-texto");
+
+        setTimeout(() => {
+            pantalla.style.display = "none";
+
+            canvas.style.display = "block";
+            texto.style.display = "block";
+            abajo.style.display = "block";
+        }, 800);
+    }
+});
+</script>
+
+</body>
+</html>
